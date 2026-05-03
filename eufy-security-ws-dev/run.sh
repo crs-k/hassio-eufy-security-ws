@@ -45,6 +45,16 @@ if bashio::config.has_value 'github_branch'; then
     EUFY_CLIENT_GIT_BRANCH="$(bashio::config 'github_branch')"
 fi
 
+EUFY_WS_GIT_URL=""
+if bashio::config.has_value 'eufy_ws_github_url'; then
+    EUFY_WS_GIT_URL="$(bashio::config 'eufy_ws_github_url')"
+fi
+
+EUFY_WS_GIT_BRANCH=""
+if bashio::config.has_value 'eufy_ws_github_branch'; then
+    EUFY_WS_GIT_BRANCH="$(bashio::config 'eufy_ws_github_branch')"
+fi
+
 EUFY_SECURITY_WS_VERSION="$(bashio::config 'eufy_ws_version')"
 
 STATION_IP_ADDRESSES_ARG=""
@@ -116,9 +126,12 @@ check_version() {
     return 0 # lower
 }
 
+cd /usr/src/app
+rm -rf eufy-security-client eufy-security-ws eufy-security-client.tgz eufy-security-ws.tgz node_modules package-lock.json
+npm pkg delete overrides.eufy-security-client >/dev/null 2>&1 || true
+
 if [ -n "${EUFY_CLIENT_GIT_URL}" ] && [ -n "${EUFY_CLIENT_GIT_BRANCH}" ];  then
     echo "Installing a git version of Eufy Client $EUFY_CLIENT_GIT_URL with branch $EUFY_CLIENT_GIT_BRANCH"
-    cd /usr/src/app
     git clone -b "$EUFY_CLIENT_GIT_BRANCH" "$EUFY_CLIENT_GIT_URL"
 
     cd eufy-security-client
@@ -128,12 +141,26 @@ if [ -n "${EUFY_CLIENT_GIT_URL}" ] && [ -n "${EUFY_CLIENT_GIT_BRANCH}" ];  then
     mv eufy-security-client*.tgz ../eufy-security-client.tgz
     cd ..
 
-    npm pkg set dependencies.eufy-security-ws="$EUFY_SECURITY_WS_VERSION"
     npm pkg set overrides.eufy-security-client=file:eufy-security-client.tgz
-    npm install --force
-else
-    npm install --force "eufy-security-ws@${EUFY_SECURITY_WS_VERSION}"
 fi
+
+if [ -n "${EUFY_WS_GIT_URL}" ] && [ -n "${EUFY_WS_GIT_BRANCH}" ]; then
+    echo "Installing a git version of Eufy WS $EUFY_WS_GIT_URL with branch $EUFY_WS_GIT_BRANCH"
+    git clone -b "$EUFY_WS_GIT_BRANCH" "$EUFY_WS_GIT_URL" eufy-security-ws
+
+    cd eufy-security-ws
+    npm ci
+    npm run build -y
+    npm pack
+    mv eufy-security-ws*.tgz ../eufy-security-ws.tgz
+    cd ..
+
+    npm pkg set dependencies.eufy-security-ws=file:eufy-security-ws.tgz
+else
+    npm pkg set dependencies.eufy-security-ws="$EUFY_SECURITY_WS_VERSION"
+fi
+
+npm install --force
 
 if bashio::config.has_value 'username' && bashio::config.has_value 'password'; then
     echo "$JSON_STRING" > $CONFIG_PATH
@@ -141,4 +168,3 @@ if bashio::config.has_value 'username' && bashio::config.has_value 'password'; t
 else
     echo "Required parameters username and/or password not set. Starting aborted!"
 fi
-

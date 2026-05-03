@@ -30,6 +30,8 @@ options:
   stations: []
   github_url: null
   github_branch: null
+  eufy_ws_github_url: null
+  eufy_ws_github_branch: null
   eufy_ws_version: "1.9.7"
 schema:
   username: email
@@ -47,5 +49,7 @@ schema:
       ip_address: match(^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$)
   github_url: str?
   github_branch: str?
+  eufy_ws_github_url: str?
+  eufy_ws_github_branch: str?
   eufy_ws_version: str
 image: bropat/hassio-eufy-security-ws-dev-{arch}

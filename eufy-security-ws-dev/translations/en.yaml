@@ -35,6 +35,12 @@ configuration:
   github_branch:
     name: Github branch
     description: Github repo branch name
+  eufy_ws_github_url:
+    name: Eufy WS Github url
+    description: Github repo link for a development eufy-security-ws build
+  eufy_ws_github_branch:
+    name: Eufy WS Github branch
+    description: Github repo branch name for a development eufy-security-ws build
   eufy_ws_version:
     name: Eufy WS Version
-    description: Version of Eufy WS package to install with github modification
+    description: Version of Eufy WS package to install when no websocket Github repo is configured

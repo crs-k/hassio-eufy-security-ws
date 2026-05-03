@@ -13,6 +13,11 @@
 | `trusted_device_name` | Label of the trusted devices (viewable with 2fa activated in Eufy App; default: random device name) |
 | `debug`               | Activates debug mode (default: false)                                                               |
 | `ipv4first`           | Forces the dns result order on Node.js to return IPv4 addresses first (default: false)              |
+| `github_url`          | Optional eufy-security-client Git repository URL for development builds                             |
+| `github_branch`       | Optional eufy-security-client Git branch for development builds                                     |
+| `eufy_ws_github_url`  | Optional eufy-security-ws Git repository URL for development builds                                 |
+| `eufy_ws_github_branch` | Optional eufy-security-ws Git branch for development builds                                      |
+| `eufy_ws_version`     | eufy-security-ws npm version to install when no websocket Git override is configured                |
 
 ## Parameter `stations`
 
